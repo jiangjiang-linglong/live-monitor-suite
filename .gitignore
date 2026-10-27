@@ -1,0 +1,27 @@
+# 密钥与登录态（绝不提交）
+feishu/feishu_app.json
+monitor/login_cookies.txt
+monitor/login_cookies.bak
+monitor/login_cookies.txt.tmp
+monitor/*.png
+monitor/*.svg
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# 运行时产物
+monitor/logs/
+deliveries/*
+!deliveries/.gitkeep
+*.ts
+*.mp4
+*.m4a
+*.log
+signal_state.json
+status.json
+
+# 系统
+.DS_Store

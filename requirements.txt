@@ -1,0 +1,13 @@
+# 小红书直播监控依赖（monitor + relay 共用一个虚拟环境）
+requests>=2.31
+curl_cffi==0.15.0
+loguru>=0.7
+qrcode>=7.4
+PyExecJS>=1.5
+cryptography>=42.0
+python-dotenv>=1.0
+retry>=0.9
+aiohttp>=3.9
+openpyxl>=3.1
+numpy>=1.24
+opencv-python>=4.8

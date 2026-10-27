@@ -1,0 +1,4 @@
+# 此文件为占位示例。真实文件为 login_cookies.txt（已被 .gitignore 排除，不入库）。
+# 生成方式：在 monitor/ 目录执行  ./.venv/bin/python do_login.py
+# 用小红书 App 扫码（可能先登录码、再风控验证码两步），成功后自动生成 login_cookies.txt。
+# 守护运行期间会自动保活并原子回写 cookie（旧文件备份为 login_cookies.bak）。
