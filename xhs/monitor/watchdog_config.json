@@ -2,15 +2,13 @@
   "webhook": "https://open.feishu.cn/open-apis/bot/v2/hook/0929d006-2582-4b9b-b65e-1d2e2af3e71a",
   "chat_id": "oc_de6681ba19dc2ee37ee942727272",
   "lark_cli": "lark-cli",
-
   "relay_port": 18080,
-
   "target": {
     "host_id": "",
     "name": "",
-    "room_id": ""
+    "room_id": "",
+    "url": ""
   },
-
   "interval_sec": 60,
   "auth_probe_sec": 1200,
   "disk_check_sec": 300,

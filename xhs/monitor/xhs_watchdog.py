@@ -16,9 +16,11 @@
   ./.venv/bin/python -u xhs_watchdog.py            # 常驻（launchd 拉起）
   ./.venv/bin/python -u xhs_watchdog.py --once     # 跑一轮检查后退出（自检）
   ./.venv/bin/python -u xhs_watchdog.py --cleanup  # 只执行一次录像清理
+  ./.venv/bin/python -u xhs_watchdog.py --resolve-link "<链接>"  # 验证链接能否识别
 配置：同目录 watchdog_config.json（首次运行自动生成默认值）。
 """
 import os
+import re
 import sys
 import json
 import time
@@ -50,7 +52,8 @@ DEFAULT_CONFIG = {
     'relay_port': 18080,
     'ffmpeg_bin': os.path.expanduser('~/.local/bin/ffmpeg'),
     # 监控目标：host_id 稳定，room_id 每场变化（留空则从直播广场按 host_id 发现）
-    'target': {'host_id': '', 'name': '', 'room_id': ''},
+    # 也可在 url 里直接粘贴直播间链接/分享文本（含 xhslink 短链），自动解析
+    'target': {'host_id': '', 'name': '', 'room_id': '', 'url': ''},
     'interval_sec': 60,              # 会话守护轮询
     'auth_probe_sec': 1200,          # 登录态/接口探测（20 分钟，同时承担保活）
     'disk_check_sec': 300,           # 磁盘检查（5 分钟）
@@ -71,6 +74,74 @@ AUTH_CODES = (-100, -101)
 AUTH_KEYWORDS = ('登录已过期', '无登录信息', '登录信息为空', '未登录', '请登录')
 # 风控/反爬签名
 RISK_KEYWORDS = ('471', 'function getdss', '__playground__', '安全验证', '验证码')
+
+# ---------- 监控目标链接解析 ----------
+_URL_RE = re.compile(r'https?://[^\s，。、“”"\'「」()（）]+')
+_ROOM_RE = re.compile(r'(?:/live/|[?&]room_id=|"room_id_str":?)(\d{10,})')
+_HOST_RE = re.compile(r'(?:[?&]host_id=|/user/profile/)([0-9a-f]{16,})')
+_SHORT_HOSTS = ('xhslink.com',)
+_link_cache = {}
+
+
+def resolve_target_link(text):
+    """把直播间链接/分享文本解析为 {'room_id':..,'host_id':..}（可能只有其一）。
+
+    支持：
+      - 纯数字房间号（10 位以上）
+      - 纯 hex host_id（16 位以上）
+      - https://www.xiaohongshu.com/live/<room_id>
+      - 链接中带 host_id= / /user/profile/<host_id>
+      - xhslink.com 短链（跟随跳转，无需登录）
+    """
+    text = (text or '').strip()
+    if not text:
+        return {}
+    if text in _link_cache:
+        return _link_cache[text]
+    if re.fullmatch(r'\d{10,}', text):
+        out = {'room_id': text}
+    elif re.fullmatch(r'[0-9a-f]{16,}', text):
+        out = {'host_id': text}
+    else:
+        m = _URL_RE.search(text)
+        if not m:
+            _link_cache[text] = {}
+            return {}
+        final = m.group(0).rstrip(')）.,，。!?！？')
+        if any(h in final for h in _SHORT_HOSTS):
+            try:
+                req = urlreq.Request(final, headers={'User-Agent': FFMPEG_UA})
+                with urlreq.urlopen(req, timeout=10) as r:
+                    final = r.geturl()
+            except Exception as e:
+                log('短链解析失败 %s: %s' % (final[:60], str(e)[:80]))
+                _link_cache[text] = {}
+                return {}
+        out = {}
+        m = _ROOM_RE.search(final)
+        if m:
+            out['room_id'] = m.group(1)
+        m = _HOST_RE.search(final)
+        if m:
+            out['host_id'] = m.group(1)
+    _link_cache[text] = out
+    return out
+
+
+def effective_target(target):
+    """合并 target 中的 url/链接文本，返回补齐后的 dict。"""
+    t = dict(target or {})
+    for key in ('url', 'room_id', 'host_id'):
+        val = (t.get(key) or '').strip()
+        if val and not val.startswith(('http', '🔴')) and ('://' not in val):
+            continue
+        if val.startswith('http') or 'xhslink.com' in val or _URL_RE.search(val):
+            parsed = resolve_target_link(val)
+            if parsed.get('room_id') and not (t.get('room_id') or '').strip():
+                t['room_id'] = parsed['room_id']
+            if parsed.get('host_id') and not (t.get('host_id') or '').strip():
+                t['host_id'] = parsed['host_id']
+    return t
 
 
 def log(msg):
@@ -462,9 +533,14 @@ class SessionSupervisor:
     # ---- 目标发现 ----
     def find_live(self):
         """返回 (room_id, name) 或 None。"""
-        target = self.cfg['target']
+        target = effective_target(self.cfg['target'])
         room_id = (target.get('room_id') or '').strip()
         name = target.get('name') or '小红书直播'
+        if not room_id and not (target.get('host_id') or '').strip():
+            raw = (self.cfg.get('target', {}).get('url') or '').strip()
+            if raw:
+                log('监控目标链接无法解析，请检查 url 字段：%s' % raw[:100])
+            return None
         sys.path.insert(0, SPIDER_DIR)
         from xhs_utils.xhs_auth import XHSUnifiedAuth
         from apis.xhs_live import XHSLiveAPI
@@ -909,6 +985,20 @@ def release_pidfile():
 
 def main():
     cfg = load_config()
+    if '--resolve-link' in sys.argv:
+        i = sys.argv.index('--resolve-link')
+        raw = sys.argv[i + 1] if i + 1 < len(sys.argv) else (cfg.get('target', {}).get('url') or '')
+        if not raw.strip():
+            print('用法：xhs_watchdog.py --resolve-link "<直播间链接或分享文本>"')
+            print('或在 watchdog_config.json 的 target.url 填好后直接执行 --resolve-link')
+            return
+        parsed = resolve_target_link(raw)
+        print('输入：', raw)
+        print('解析结果：', json.dumps(parsed, ensure_ascii=False) or '（无法识别）')
+        if parsed:
+            t = effective_target(dict(cfg.get('target', {}), url=raw))
+            print('生效目标：room_id=%s host_id=%s' % (t.get('room_id') or '', t.get('host_id') or ''))
+        return
     if '--cleanup' in sys.argv:
         wd = Watchdog(cfg)
         deleted, freed = wd.disk.cleanup_expired()

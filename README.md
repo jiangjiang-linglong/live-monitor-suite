@@ -57,7 +57,13 @@ cp data/xhs/feishu_app.example.json data/xhs/feishu_app.json
 docker compose build xhs-monitor
 docker compose run --rm --workdir /data/xhs xhs-monitor python /app/monitor/do_login.py
 #   打开 data/xhs/login_qr.png 用小红书 App 扫码（可能含风控验证两步）
-#   编辑 xhs/monitor/watchdog_config.json 填监控目标（host_id 或 room_id）
+#   编辑 xhs/monitor/watchdog_config.json 填监控目标，三种方式任选：
+#     1) target.url 直接粘贴直播间链接或分享文本（含 xhslink 短链，自动解析）
+#     2) target.host_id 填主播 host_id（推荐，最稳定，自动发现每场开播）
+#     3) target.room_id 填当前房间号（每场变化，仅适合临时验证）
+#   验证链接能否识别：
+#     docker compose run --rm xhs-monitor python /app/monitor/xhs_watchdog.py --resolve-link "<链接>"
+#     （Mac 本机：cd xhs/monitor && ./.venv/bin/python xhs_watchdog.py --resolve-link "<链接>"）
 
 # —— 抖音 ——
 docker compose build douyin-recorder
@@ -128,5 +134,6 @@ launchctl load ~/Library/LaunchAgents/com.causmatrix.douyin-recorder.plist
 - **凭证不入库**：`xhs/feishu/feishu_app.json`、`xhs/monitor/login_cookies.txt`、抖音 `config.ini`（含 cookie）均已被 `.gitignore` 排除。
 - **抖音录制必须提供 cookie**：从浏览器登录 live.douyin.com 后复制 Cookie 到 `config/config.ini`；小红书实时链路游客即可拉流，但信号采集需要登录态扫码。
 - **录像保留**：小红书服务 24h 自动清理 `.ts/.mp4`；抖音服务录像保留在 `data/douyin/downloads`（自行清理）。
+- **监控目标可以直接粘贴链接**：在 `xhs/monitor/watchdog_config.json` 的 `target.url` 粘贴直播间链接/分享文本，守护自动解析 room_id/host_id；解析不到会在日志中明确提示，不会静默空跑。
 - **不要用抖音录播器同时录小红书房间**（会与 xhs 服务重复录制）；小红书统一走 xhs-monitor。
 - 均为非官方接口，存在账号风控风险；多账号多房间/代理方案需另行改造。
