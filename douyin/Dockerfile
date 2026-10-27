@@ -1,5 +1,5 @@
 # 抖音（及多平台）录播器
-# 构建上下文为 douyin/：docker build -f ../docker/Dockerfile.douyin -t live-monitor-douyin .
+# 构建上下文为 douyin/ 目录：在仓库根目录执行 docker compose build douyin-recorder
 FROM python:3.11-slim
 
 # 国内镜像源（apt 阿里云 + pip 清华）；海外机器可删本段 sed 与 -i 参数

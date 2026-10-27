@@ -1,5 +1,5 @@
 # 小红书实时监控服务（relay + watchdog + pipeline + ffmpeg）
-# 构建上下文为仓库根目录：docker build -f docker/Dockerfile.xhs -t live-monitor-xhs .
+# 构建上下文为 xhs/ 目录：在仓库根目录执行 docker compose build xhs-monitor
 FROM python:3.11-slim
 
 # 国内镜像源（apt 阿里云 + pip 清华）；海外机器可删本段 sed 与 -i 参数

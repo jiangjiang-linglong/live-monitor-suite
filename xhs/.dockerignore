@@ -1,0 +1,14 @@
+.venv
+__pycache__
+*.pyc
+logs
+deliveries
+*.ts
+*.mp4
+*.m4a
+*.log
+login_cookies.txt
+login_cookies.bak
+login_cookies.txt.tmp
+login_qr.png
+.DS_Store

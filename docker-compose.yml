@@ -1,20 +1,23 @@
-# 直播监控双服务：
+# 直播监控双服务（代码各自独立目录：xhs/、douyin/）：
 #   xhs-monitor     小红书实时监控（弹幕/人数/商品/多维表/群交付）
 #   douyin-recorder 抖音录播器（多平台录制 + 开播/下播飞书通知 + 离线后处理）
 # 两个服务独立运行、独立重启，互不影响。
 #
 # 首次使用：
 #   1. cp data/xhs/feishu_app.example.json data/xhs/feishu_app.json 并填凭证
-#   2. docker compose run --rm xhs-monitor python monitor/do_login.py   # 扫码登录（二维码在 data/xhs/login_qr.png）
-#   3. 编辑 data/douyin/config/URL_config.ini 和 config.ini（抖音 cookie + 房间）
-#   4. 编辑 monitor/watchdog_config.json 填监控目标
-#   5. docker compose up -d --build
+#   2. docker compose build xhs-monitor
+#      docker compose run --rm --workdir /data/xhs xhs-monitor python /app/monitor/do_login.py
+#      （二维码在 data/xhs/login_qr.png，用小红书 App 扫码）
+#   3. 编辑 xhs/monitor/watchdog_config.json 填监控目标
+#   4. 抖音：docker compose build douyin-recorder 后，
+#      编辑 data/douyin/config/URL_config.ini（房间）和 config.ini（抖音 cookie）
+#   5. docker compose up -d
 
 services:
   xhs-monitor:
     build:
-      context: .
-      dockerfile: docker/Dockerfile.xhs
+      context: ./xhs
+      dockerfile: Dockerfile
     image: live-monitor-xhs:latest
     container_name: xhs-monitor
     restart: unless-stopped
@@ -27,15 +30,14 @@ services:
       - ./data/xhs/deliveries:/app/deliveries
       - ./data/xhs/logs:/app/monitor/logs
       # 监控目标配置（宿主机修改后重启容器生效）
-      - ./monitor/watchdog_config.json:/app/monitor/watchdog_config.json:ro
+      - ./xhs/monitor/watchdog_config.json:/app/monitor/watchdog_config.json:ro
     # 扫码登录（一次性，容器不常驻）：
     #   docker compose run --rm --workdir /data/xhs xhs-monitor python /app/monitor/do_login.py
-    #   扫码图片在 data/xhs/login_qr.png，用小红书 App 扫码
 
   douyin-recorder:
     build:
       context: ./douyin
-      dockerfile: ../docker/Dockerfile.douyin
+      dockerfile: Dockerfile
     image: live-monitor-douyin:latest
     container_name: douyin-recorder
     restart: unless-stopped

@@ -1,12 +1,17 @@
-# 密钥与登录态（绝不提交）
-feishu/feishu_app.json
-monitor/login_cookies.txt
-monitor/login_cookies.bak
-monitor/login_cookies.txt.tmp
-monitor/login_qr.png
-monitor/*.svg
+# ===== 小红书：密钥与登录态（绝不提交）=====
+xhs/feishu/feishu_app.json
+xhs/monitor/login_cookies.txt
+xhs/monitor/login_cookies.bak
+xhs/monitor/login_cookies.txt.tmp
+xhs/monitor/login_qr.png
+xhs/monitor/*.svg
+xhs/monitor/logs/
+xhs/deliveries/*
+!xhs/deliveries/.gitkeep
+xhs/monitor/*.venv/
+xhs/.venv/
 
-# 抖音录播器运行时配置（含 cookie）
+# ===== 抖音：运行时配置（含 cookie）与产物 =====
 douyin/config/config.ini
 douyin/config/URL_config.ini
 douyin/downloads/*
@@ -15,8 +20,9 @@ douyin/logs/*
 !douyin/logs/.gitkeep
 douyin/backup_config/
 douyin/minutes/
+douyin/.venv/
 
-# Docker 运行时数据（凭证、录像、日志、cookie）
+# ===== Docker 运行时数据（凭证、录像、日志、cookie）=====
 data/xhs/*
 !data/xhs/.gitkeep
 !data/xhs/feishu_app.example.json
@@ -27,16 +33,12 @@ data/douyin/config/*
 !data/douyin/config/config.ini.example
 !data/douyin/config/URL_config.ini.example
 
-# Python
+# ===== Python =====
 __pycache__/
 *.pyc
-.venv/
 venv/
 
-# 运行时产物
-monitor/logs/
-deliveries/*
-!deliveries/.gitkeep
+# ===== 通用运行时产物 =====
 *.ts
 *.mp4
 *.m4a
@@ -44,5 +46,5 @@ deliveries/*
 signal_state.json
 status.json
 
-# 系统
+# ===== 系统 =====
 .DS_Store
