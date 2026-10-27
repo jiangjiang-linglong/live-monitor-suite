@@ -1,0 +1,44 @@
+[录制设置]
+直播保存路径（不填则默认） = 
+视频保存格式ts|mkv|flv|mp4|ts音频|mkv音频 = ts
+原画|超清|高清|标清 = 标清
+是否使用代理ip（是/否） = 否
+代理地址 = 
+同一时间访问网络的线程数 = 3
+循环时间(秒) = 120
+排队读取网址时间(秒) = 0
+是否显示循环秒数 = 否
+分段录制是否开启 = 是
+视频分段时间(秒) = 1800
+生成时间文件 = 否
+ts录制完成后自动转为mp4格式 = 否
+ts录制完成后自动增加生成m4a格式 = 否
+追加格式后删除原文件 = 否
+
+[推送配置]
+直播状态通知(可选微信|钉钉|TG或者都填) = 飞书
+钉钉推送接口链接 = 
+微信推送接口链接 = 
+钉钉通知@对象(填手机号) = 
+tgapi令牌 = 
+tg聊天id(个人或者群组id) = 
+飞书机器人webhook = 
+飞书机器人签名密钥(留空则不签名) = 
+
+[Cookie]
+抖音cookie(录制抖音必须要有) = 
+快手cookie = 
+tiktok_cookie = 
+虎牙cookie = 
+斗鱼cookie = 
+yy_cookie = 
+b站cookie = 
+小红书cookie = 
+bigo_cookie = 
+blued_cookie = 
+afreecatv_cookie = 
+netease_cookie = 
+千度热播_cookie = 
+pandatv_cookie = 
+猫耳fm_cookie = 
+

@@ -3,8 +3,29 @@ feishu/feishu_app.json
 monitor/login_cookies.txt
 monitor/login_cookies.bak
 monitor/login_cookies.txt.tmp
-monitor/*.png
+monitor/login_qr.png
 monitor/*.svg
+
+# 抖音录播器运行时配置（含 cookie）
+douyin/config/config.ini
+douyin/config/URL_config.ini
+douyin/downloads/*
+!douyin/downloads/.gitkeep
+douyin/logs/*
+!douyin/logs/.gitkeep
+douyin/backup_config/
+douyin/minutes/
+
+# Docker 运行时数据（凭证、录像、日志、cookie）
+data/xhs/*
+!data/xhs/.gitkeep
+!data/xhs/feishu_app.example.json
+data/douyin/*
+!data/douyin/.gitkeep
+!data/douyin/config
+data/douyin/config/*
+!data/douyin/config/config.ini.example
+!data/douyin/config/URL_config.ini.example
 
 # Python
 __pycache__/

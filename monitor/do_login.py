@@ -58,7 +58,7 @@ def prepare_login_qr(login):
     success, msg, cookies = login.check_qrcode_status(
         qr_data['qr_id'], qr_data['code'], cookies)
     login.ensure_webprofile(cookies)
-    save_qr_png(qr_data['qr_url'], 'login_qr.png')
+    save_qr_png(qr_data['qr_url'], os.environ.get('XHS_LOGIN_QR', 'login_qr.png'))
     print('LOGIN_QR_SAVED @%d' % int(time.time()), flush=True)
     return cookies, qr_data['qr_id'], qr_data['code']
 
@@ -164,7 +164,8 @@ def main():
         print('VERIFY_FAIL'); sys.exit(4)
 
     cookies_str = login.cookies_to_str(cookies)
-    with open('login_cookies.txt', 'w') as f:
+    cookie_path = os.environ.get('XHS_COOKIE_PATH', 'login_cookies.txt')
+    with open(cookie_path, 'w') as f:
         f.write(cookies_str)
     print('LOGIN_SUCCESS nickname=%s redid=%s' % (
         user_info.get('nickname'), user_info.get('red_id')), flush=True)

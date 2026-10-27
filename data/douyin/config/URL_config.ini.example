@@ -1,0 +1,5 @@
+# 每行一个直播间链接，行尾格式：https://live.douyin.com/xxxx,主播: 昵称
+# 抖音（录制必须在 config/config.ini 填抖音 cookie）
+#https://live.douyin.com/xxxxxxxxxxx,主播: 示例主播A
+# 小红书（仅录制，实时弹幕/人数/商品监控请用 xhs 服务；容器内的抖音录制服务不启用 xhs relay）
+#https://www.xiaohongshu.com/livestream/xxxxxxxxxxxx,主播: 示例主播B

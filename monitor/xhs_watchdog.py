@@ -34,7 +34,7 @@ REPO_ROOT = os.path.dirname(SPIDER_DIR)
 LOG_DIR = os.path.join(SPIDER_DIR, 'logs')
 os.makedirs(LOG_DIR, exist_ok=True)
 CONFIG_PATH = os.path.join(SPIDER_DIR, 'watchdog_config.json')
-COOKIE_PATH = os.path.join(SPIDER_DIR, 'login_cookies.txt')
+COOKIE_PATH = os.environ.get('XHS_COOKIE_PATH', os.path.join(SPIDER_DIR, 'login_cookies.txt'))
 COOKIE_BAK_PATH = os.path.join(SPIDER_DIR, 'login_cookies.bak')
 
 DEFAULT_CONFIG = {

@@ -1,0 +1,16 @@
+.git
+.venv
+downloads
+logs
+backup_config
+minutes
+__pycache__
+*.pyc
+*.ts
+*.mp4
+*.m4a
+*.run.log
+.DS_Store
+ffmpeg.exe
+libs
+api

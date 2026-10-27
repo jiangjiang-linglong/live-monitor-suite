@@ -28,7 +28,7 @@ OUTDIR = sys.argv[4]
 WEBHOOK = sys.argv[5]
 CHAT_ID = sys.argv[6] if len(sys.argv) > 6 else ''
 LARK_CLI = sys.argv[7] if len(sys.argv) > 7 else 'lark-cli'
-COOKIE_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'login_cookies.txt')
+COOKIE_PATH = os.environ.get('XHS_COOKIE_PATH', os.path.join(os.path.dirname(os.path.abspath(__file__)), 'login_cookies.txt'))
 COOKIE_BAK_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'login_cookies.bak')
 # 登录态失效签名（已实测，见 xhs_watchdog.HealthProbe）
 AUTH_CODES = (-100, -101)
