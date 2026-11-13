@@ -48,7 +48,7 @@ live-monitor/
 前提：装好 Docker（Mac 为 Docker Desktop / OrbStack，Linux 为 Docker Engine + compose 插件）。
 
 ```bash
-git clone https://gitee.com/michael_1226/live-monitor.git
+git clone https://github.com/jiangjiang-linglong/live-monitor-suite.git
 cd live-monitor
 
 # —— 小红书 ——
